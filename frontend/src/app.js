@@ -1,4 +1,9 @@
-import 'bootstrap';
-import './scss/app.scss';
+import 'bootstrap'
+import './scss/app.scss'
 
-const a = 9
+const template = require('./views/listItem.ejs');
+const html = template({ name: 'carlos'})
+
+    // document.getElementById('content').innerHTML = html;
+    $('#content').html(html);
+const asd=10
