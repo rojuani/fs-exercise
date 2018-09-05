@@ -2,7 +2,9 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './src/app.js',
+  entry: [
+    './src/app.js'
+  ],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
@@ -53,7 +55,8 @@ module.exports = {
       {
           test: /\.ejs$/,
           loader: 'ejs-compiled-loader'
-      }
+      },
+      {test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/, loader: 'file-loader'}
     ]
   }
 };

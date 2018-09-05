@@ -1,0 +1,39 @@
+<div>
+    <p>holaa templating <%= name %></p>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <h2>List Item</h2>
+            <p>counter: <%= items.length %></p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Description</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% if (items.length) { %>
+
+                <% items.forEach(function(item){ %>
+                <tr>
+                    <td><img class="img-responsive" width="50" src="<%= item.picture %>"></td>
+                    <td><%= item.description %></td>
+                    <td>
+                        <a href="{{ path('app_bemama_content_edit', {id: c.id}) }}" title="{{ 'Editar' | trans }}"><i class="fa fa-edit"></i></a>&nbsp;
+                        <a href="#" class="delete-link" data-url="{{ path('app_bemama_content_delete', {id: c.id}) }}" title="{{ 'Eliminar' | trans }}"><i class="fa fa-trash"></i></a>&nbsp;
+                    </td>
+                </tr>
+                <% }) %>
+                <% } else { %>
+                <tr>
+                    <td colspan=5">'No hay contenidos'</td>
+                </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
