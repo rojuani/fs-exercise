@@ -1,9 +1,10 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './src/app.js',
+  entry: [
+    './src/app.js'
+  ],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
@@ -12,23 +13,15 @@ module.exports = {
     new require('copy-webpack-plugin')([
       { from: './dist/index.html' }
     ]),
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: './dist/index.html',
-      inject: true
+    new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery"
     })
-    
   ],
   watchOptions: {
-    aggregateTimeout: 300,
-    poll: 1000
+      aggregateTimeout: 300,
+      poll: 1000
   },
-  watch: true,
-  /* devServer: {
-    contentBase: './dist',
-    hot: true
-  }, */
   module: {
     rules: [
       {
@@ -58,7 +51,12 @@ module.exports = {
             loader: 'sass-loader'
           }
         ]
-      }
+      },
+      {
+          test: /\.ejs$/,
+          loader: 'ejs-compiled-loader'
+      },
+      {test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/, loader: 'file-loader'}
     ]
   }
 };

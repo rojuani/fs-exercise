@@ -6,10 +6,12 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const config = require('./config')
 const PORT = process.env.PORT || 8082
+const cors = require('cors')
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(cors())
 
 mongoose.connect(config.db.host, function(err) {
   if (err) {
