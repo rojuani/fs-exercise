@@ -5,6 +5,13 @@ const templateList = require('./views/listItem.ejs')
 const templateForm = require('./views/formItem.ejs')
 
 let itemsList = []
+
+import autocomplete from 'jquery-ui/ui/widgets/autocomplete';
+
+/*$('<h1>Welcome to the programming languages quiz</h1>').appendTo('body');
+new autocomplete({
+  source: ['javascript', 'css', 'c', 'vuejs', 'nuxt']
+}).element.appendTo('body').focus();]*/
     // document.getElementById('content').innerHTML = html;
     // $('#content').html(html);
 $.get("http://localhost:3000/items", function (response) {
