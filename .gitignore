@@ -1,4 +1,4 @@
-node/node_modules
-node/.env
+backend/node/node_modules
+backend/node/.env
 .idea
-node/logs/*
+backend/node/logs/*

@@ -1,30 +1,30 @@
 <div class="row">
     <div class="col-lg-12">
-        <a class="btn btn-primary pull-right" href="#" id="new-item">Crear</a>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
         <div class="table-responsive">
-            <h2>List Item</h2>
-            <p>counter: <span id="counter"><%= items.length %></span></p>
+            <h2>Lista de Items</h2>
+            <p>contador: <span id="counter"><%= items.length %></span></p>
+            <div class="row">
+                <div class="col-lg-12">
+                    <a class="btn btn-primary pull-right" href="#" id="new-item">Crear</a>
+                </div>
+            </div>
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Image</th>
-                    <th>Description</th>
+                    <th>Imagen</th>
+                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
-                <tbody>
+
                 <% if (items.length) { %>
 
                 <% items.forEach(function(item, index) { %>
-                <tr id="item-<%= item._id %>">
-                    <td><img class="img-responsive" width="70" src="<%= item.picture %>"></td>
+                <tr id="item-<%= item._id %>" data-position="<%= item.position %>" data-index="<%= index %>">
+                    <td><img class="img-responsive" width="60" src="<%= item.picture %>"></td>
                     <td><%= item.description %></td>
                     <td>
-                        <a href="#" data-index="<%= index %>" title="Editar" class="p-2 update-item"><i class="fa fa-edit"></i></a>
+                        <a href="#" data-key="<%= item._id %>" title="Editar" class="p-2 update-item"><i class="fa fa-edit"></i></a>
                         <a href="#" data-key="<%= item._id %>" title="Eliminar" class="p-2 delete-item"><i class="fa fa-trash"></i></a>&nbsp;
                     </td>
                 </tr>

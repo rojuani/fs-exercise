@@ -9,5 +9,9 @@ module.exports = {
     apiSecret: process.env.API_SECRET,
     cloudName: process.env.CLOUD_NAME,
     url: util.format(`http://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/c_limit,h_320,w_320/`)
+  },
+  credentials: {
+    username: process.env.USERNAME,
+    password: process.env.PASS
   }
 }

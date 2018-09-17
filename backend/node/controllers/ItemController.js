@@ -38,7 +38,8 @@ function create(req, res) {
         item.save(function(err) {
           if (err)
             throw err
-          res.send('created!').status(201)
+          item.picture = config.cdn.url + item.picture
+          res.send(item).status(201)
         })
       })
     })
@@ -103,18 +104,23 @@ function update(req, res) {
             if (err) throw err
           })
           item.picture = url[url.length - 1]
+          if (fields.description !== undefined) {
+            item.description = fields.description
+          }
           item.save(function(err) {
             if (err) throw err
+            item.picture = config.cdn.url + item.picture
+            res.send(item)
           })
         })
-      }
-      if (fields.description !== undefined) {
+      } else if (fields.description !== undefined) {
         item.description = fields.description
         item.save(function(err) {
           if (err) throw err
+          item.picture = config.cdn.url + item.picture
+          res.send(item)
         })
       }
-      res.send('updated')
     })
   })
 }

@@ -8,10 +8,19 @@ const config = require('./config')
 const PORT = process.env.PORT || 8082
 const cors = require('cors')
 const app = express()
+const auth = require('http-auth')
+
+const basic = auth.basic({
+    realm: "Protected Area."
+  }, (username, password, callback) => {
+    callback(username === config.credentials.username && password === config.credentials.password);
+  }
+)
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors())
+app.use(auth.connect(basic))
 
 mongoose.connect(config.db.host, function(err) {
   if (err) {
