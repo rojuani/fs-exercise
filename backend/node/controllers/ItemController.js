@@ -12,7 +12,13 @@ cloudinary.config({
 })
 
 function index(req, res) {
-  Item.find({}, {}, { sort: {position: 'asc'} }, function (err, items) {
+  Item.aggregate([
+    { $sort : { position : 1 } },
+    {$project: {id: '$_id', picture: 1, description: 1, position:1, _id: 0}}
+  ], function (err, items) {
+    if (err) {
+      throw err
+    }
     items.map(function (item) {
       item.picture = config.cdn.url + item.picture
       return item
@@ -38,8 +44,7 @@ function create(req, res) {
         item.save(function(err) {
           if (err)
             throw err
-          item.picture = config.cdn.url + item.picture
-          res.send(item).status(201)
+          res.send(item.toClient()).status(201)
         })
       })
     })
@@ -109,16 +114,14 @@ function update(req, res) {
           }
           item.save(function(err) {
             if (err) throw err
-            item.picture = config.cdn.url + item.picture
-            res.send(item)
+            res.send(item.toClient())
           })
         })
       } else if (fields.description !== undefined) {
         item.description = fields.description
         item.save(function(err) {
           if (err) throw err
-          item.picture = config.cdn.url + item.picture
-          res.send(item)
+          res.send(item.toClient())
         })
       }
     })

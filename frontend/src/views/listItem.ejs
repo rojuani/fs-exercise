@@ -20,12 +20,12 @@
                 <% if (items.length) { %>
 
                 <% items.forEach(function(item, index) { %>
-                <tr id="item-<%= item._id %>" data-position="<%= item.position %>" data-index="<%= index %>">
+                <tr id="item-<%= item.id %>" data-position="<%= item.position %>" data-index="<%= index %>">
                     <td><img class="img-responsive" width="60" src="<%= item.picture %>"></td>
                     <td><%= item.description %></td>
                     <td>
-                        <a href="#" data-key="<%= item._id %>" title="Editar" class="p-2 update-item"><i class="fa fa-edit"></i></a>
-                        <a href="#" data-key="<%= item._id %>" title="Eliminar" class="p-2 delete-item"><i class="fa fa-trash"></i></a>&nbsp;
+                        <a href="#" data-key="<%= item.id %>" title="Editar" class="p-2 update-item"><i class="fa fa-edit"></i></a>
+                        <a href="#" data-key="<%= item.id %>" title="Eliminar" class="p-2 delete-item"><i class="fa fa-trash"></i></a>&nbsp;
                     </td>
                 </tr>
                 <% }) %>
