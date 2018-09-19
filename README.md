@@ -28,3 +28,9 @@ docker-compose up
 
 **Note:** The application use un CDN for save the images, in .env file are provided credentials for test, can you make your own too.
 More info [cloudinary.com](https://cloudinary.com/)
+
+## Backlog
+
+- Routing
+- flash messages
+- Validate in form
