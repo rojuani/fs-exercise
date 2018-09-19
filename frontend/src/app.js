@@ -33,6 +33,7 @@ $('body').on('click', '#new-item', function(e) {
 
 $('body').on('click', '#save', function(e) {
   e.preventDefault()
+  $(this).attr("disabled","disabled").addClass('btn-secondary disabled')
   const imageItem = $('#image-item').prop('files')[0]
   const textItem = $('#text-item').val()
   const formdata = new FormData()
@@ -60,7 +61,7 @@ $('body').on('click', '#save', function(e) {
     cache: false,
     contentType: false,
     processData: false,
-    success: function(response) {
+    success: function(response) {console.log(key);console.log(itemsList)
         if (key !== null && !isNaN(key[1]) && itemsList[key[1]] !== undefined) {
           itemsList[key[1]] = response
         } else {
@@ -94,7 +95,7 @@ $('body').on('click', '.delete-item', (e) => {
         const itemSelected = '#item-' + id
         const counter = document.getElementById('counter').innerHTML
         document.getElementById('counter').innerHTML = counter - 1
-        delete itemsList[$(itemSelected).attr('data-index')]
+        itemsList.splice($(itemSelected).attr('data-index'), 1)
         $(itemSelected).remove()
       },
       error: function (jqXHR, exception) {
@@ -113,6 +114,13 @@ $('body').on('click', '.update-item', function(e) {
   document.getElementById('content').innerHTML = templateForm({ item: itemsList[index] })
 })
 
+$('body').on('click', '#image-item', function(e) {
+  const image = $('img')
+  if (image.length) {
+    image.addClass('d-none')
+  }
+})
+
 const settings = {
   start: function (e, ui) {
     // creates a temporary attribute on the element with the old index
@@ -120,13 +128,15 @@ const settings = {
   },
   update: function (event, ui) {
     const newIndex = ui.item.index()
-    const oldIndex = $(this).attr('data-previndex');
-    const element_id = ui.item.attr('id');
+    const source = $(this)
+    const oldIndex = source.attr('data-previndex')
+    const element_id = ui.item.attr('id')
     const previousElement = (newIndex < oldIndex) ? ui.item[0].nextElementSibling : ui.item[0].previousElementSibling
+    const target = $(previousElement)
     $.ajax({
       url: config.apiUrl + element_id.split('-')[1],
       type: 'PUT',
-      data: {position: $(previousElement).attr('data-position')},
+      data: {position: target.attr('data-position')},
       headers: {
         Authorization:"Basic " + config.token
       },

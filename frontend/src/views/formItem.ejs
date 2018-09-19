@@ -1,22 +1,22 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header"><% if (item !== undefined) { %>Modificar<% } else { %>Nuevo<% } %> Item</h1>
+        <h2 class="page-header"><% if (item !== undefined) { %>Actualización<% } else { %>Nuevo<% } %> Item</h2>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-12">
         <div class="form-group">
-            <label>Imagen</label>
             <% if (item !== undefined) { %>
-                <img class="img-responsive" width="250" src="<%= item.picture %>">
+                <img class="img-responsive" width="225" src="<%= item.picture %>"><br />
             <% } %>
+            <label>Imagen</label>
             <input type="file" class="form-control" id="image-item">
         </div>
     </div>
     <div class="col-lg-12">
         <div class="form-group">
-            <label>descripción</label>
+            <label>Descripción</label>
             <input type="text" class="form-control" id="text-item"<% if (item !== undefined) { %>value="<%= item.description %>"<% } %>>
         </div>
     </div>
@@ -24,6 +24,6 @@
 </div>
 <div class="row">
     <div class="col-lg-12">
-        <a class="btn btn-primary pull-right" href="#" <% if (item !== undefined) { %>data-id="<%= item._id + '_' + item.index %>"<% } %> id="save">Guardar</a>
+        <a class="btn btn-primary pull-right" href="#" <% if (item !== undefined) { %>data-id="<%= item.id + '_' + item.index %>"<% } %> id="save">Guardar</a>
     </div>
 </div>

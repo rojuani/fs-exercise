@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(auth.connect(basic))
 
-mongoose.connect(config.db.host, function(err) {
+mongoose.connect(config.db.host, function (err) {
   if (err) {
     console.log('MongoDB connection error: ' + err)
     process.exit(1);
@@ -32,7 +32,7 @@ mongoose.connect(config.db.host, function(err) {
 const routes = require('./routes')
 routes.assignRoutes(app)
 
-if(!module.parent) {
+if (!module.parent) {
   const server = app.listen(PORT, () => {
       console.log('Running on http://' + server.address().address + ':' + server.address().port)
   })

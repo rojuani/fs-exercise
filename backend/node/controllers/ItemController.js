@@ -12,43 +12,47 @@ cloudinary.config({
 })
 
 function index(req, res) {
-  Item.aggregate([
-    { $sort : { position : 1 } },
-    {$project: {id: '$_id', picture: 1, description: 1, position:1, _id: 0}}
-  ], function (err, items) {
-    if (err) {
-      throw err
-    }
-    items.map(function (item) {
-      item.picture = config.cdn.url + item.picture
-      return item
+  try {
+    Item.find({}, {}, { sort: {position: 'asc'} }, function (err, items) {
+      if (err) throw err
+      const itemData = items.map(function (item) {
+        return item.toClient()
+      })
+      res.json(itemData)
     })
-    res.json(items)
-  })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('An unexpected error occurred')
+  }
 }
 
 function create(req, res) {
   const form = new formidable.IncomingForm()
-  form.parse(req, function(err, fields, files) {
-    if (files.image === undefined || fields.description === undefined) {
-      res.send('The fields image and description are required.')
-      return
-    }
-    cloudinary.uploader.upload(files.image.path, function(result) {
-      const url = result.url.split('/')
-      const item = new Item()
-      item.picture = url[url.length - 1]
-      item.description = fields.description
-      getNextSequenceValue('position', function (position) {
-        item.position = position
-        item.save(function(err) {
-          if (err)
-            throw err
-          res.send(item.toClient()).status(201)
+  try {
+    form.parse(req, function (err, fields, files) {
+      if (err) throw err
+      if (files.image === undefined || fields.description === undefined) {
+        res.status(400).send('The fields image and description are required.')
+        return
+      }
+      cloudinary.uploader.upload(files.image.path, function (result) {
+        const url = result.url.split('/')
+        const item = new Item()
+        item.picture = url[url.length - 1]
+        item.description = fields.description
+        getNextSequenceValue('position', function (position) {
+          item.position = position
+          item.save(function (err) {
+            if (err) throw err
+            res.status(201).send(item.toClient())
+          })
         })
       })
     })
-  })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('An unexpected error occurred')
+  }
 }
 
 const updatePosition = function (item, position) {
@@ -71,10 +75,10 @@ const updatePosition = function (item, position) {
         { $inc: inc },
         { multi: true },
         function (err, raw) {
-          if (err) throw err
+          if (err) reject('The item could not be modified')
           item.position = position
           item.save(function (err) {
-            if (err) throw err
+            if (err) reject('The item could not be modified')
           })
         }
       )
@@ -86,63 +90,81 @@ const updatePosition = function (item, position) {
 
 function update(req, res) {
   const id = req.params.id
-  Item.findById(id, function (err, item) {
-    if (err) throw err
-    if (req.body.position !== undefined) {
-      updatePosition(item, req.body.position).then(function (msj) {
-        res.send(msj)
-      }).catch(function (err) {
-        res.send(JSON.stringify(err)).status(404)
-      })
-    }
-    const form = new formidable.IncomingForm()
-    form.parse(req, function(err, fields, files) {
-      if (files.image === undefined && fields.description === undefined) {
-        res.send("No fields were sent to modify.")
-        return
+  try {
+    Item.findById(id, function (err, item) {
+      if (err) throw err
+      // If only we update the position
+      if (req.body.position !== undefined) {
+        updatePosition(item, req.body.position).then(function (msj) {
+          res.send(msj)
+          return
+        }).catch(function (err) {
+          res.status(400).send(JSON.stringify(err))
+        })
       }
-      if (files.image !== undefined) {
-        cloudinary.uploader.upload(files.image.path, function(result) {
-          const url = result.url.split('/')
-          const oldPicture = item.picture.split('.')[0]
-          cloudinary.v2.uploader.destroy(oldPicture, {invalidate: true }, function(err, result) {
-            if (err) throw err
+
+      const form = new formidable.IncomingForm()
+      form.parse(req, function (err, fields, files) {
+        if (err) throw err
+        if (files.image === undefined && fields.description === undefined) {
+          res.status(400).send("No fields were sent to modify.")
+          return
+        }
+        if (files.image !== undefined) {
+          cloudinary.uploader.upload(files.image.path, function (result) {
+            const url = result.url.split('/')
+            const oldPicture = item.picture.split('.')[0]
+            cloudinary.v2.uploader.destroy(oldPicture, { invalidate: true }, function (err, result) {
+              if (err) throw err
+            })
+            item.picture = url[url.length - 1]
+            if (fields.description !== undefined) {
+              item.description = fields.description
+            }
+            item.save(function (err) {
+              if (err) throw err
+              res.send(item.toClient())
+            })
           })
-          item.picture = url[url.length - 1]
-          if (fields.description !== undefined) {
-            item.description = fields.description
-          }
-          item.save(function(err) {
+        } else if (fields.description !== undefined) {
+          item.description = fields.description
+          item.save(function (err) {
             if (err) throw err
             res.send(item.toClient())
           })
-        })
-      } else if (fields.description !== undefined) {
-        item.description = fields.description
-        item.save(function(err) {
-          if (err) throw err
-          res.send(item.toClient())
-        })
-      }
+        }
+      })
     })
-  })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('An unexpected error occurred')
+  }
 }
 
 function destroy(req, res) {
   const id = req.params.id
-  Item.findByIdAndRemove(id, function (err, item) {
-    if (err) throw err
-    cloudinary.v2.uploader.destroy(item.picture.split('.')[0], {invalidate: true }, function(err, result) {
+  try {
+    Item.findByIdAndRemove(id, function (err, item) {
       if (err) throw err
-      res.send('deleted')
+      if (!item) {
+        res.status(404).send('Not found')
+        return
+      }
+      cloudinary.v2.uploader.destroy(item.picture.split('.')[0], { invalidate: true }, function (err, result) {
+        if (err) throw err
+        res.send('deleted')
+      })
     })
-  })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('An unexpected error occurred')
+  }
 }
 
 function getNextSequenceValue(sequenceName, cb) {
   Counter.findByIdAndUpdate(
     sequenceName,
-    { $inc: { sequence_value: 1 }},
+    { $inc: { sequence_value: 1 } },
     { new: true },
     function (err, counter) {
       if (err) throw err

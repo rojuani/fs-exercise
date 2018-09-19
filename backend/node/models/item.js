@@ -18,13 +18,13 @@ return v.length < 300
 itemSchema.method('toClient', function() {
   const obj = this.toObject()
 
-  //Rename fields
-  obj.id = obj._id
-  delete obj._id
-  delete obj.__v
-  obj.picture = config.cdn.url + obj.picture
-
-  return obj;
+  // Data layer
+  return {
+    id: obj._id,
+    picture: config.cdn.url + obj.picture,
+    description: obj.description,
+    position: obj.position
+  }
 })
 
 module.exports = mongoose.model('Item', itemSchema)
