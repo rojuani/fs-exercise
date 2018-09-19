@@ -61,7 +61,7 @@ $('body').on('click', '#save', function(e) {
     cache: false,
     contentType: false,
     processData: false,
-    success: function(response) {console.log(key);console.log(itemsList)
+    success: function(response) {
         if (key !== null && !isNaN(key[1]) && itemsList[key[1]] !== undefined) {
           itemsList[key[1]] = response
         } else {
