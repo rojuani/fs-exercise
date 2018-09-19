@@ -23,5 +23,8 @@ cp backend/node/.env.example backend/node/.env
 docker-compose up
 ```
 
+- Go to [http://localhost:8080](http://localhost:8080/#)
+
+
 **Note:** The application use un CDN for save the images, in .env file are provided credentials for test, can you make your own too.
 More info [cloudinary.com](https://cloudinary.com/)
